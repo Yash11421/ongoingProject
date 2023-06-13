@@ -19,7 +19,7 @@ form {
 
 .edit , .delete{
   padding:10px;
-  font-size: 0.8rem;
+  font-size: .8rem;
 }
 
 .table-container {
@@ -81,7 +81,7 @@ label {
 }
 
 .spacing{
-  margin-bottom: 0%;
+  margin-bottom: 0;
 }
 
 input[type="text"],

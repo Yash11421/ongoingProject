@@ -1,5 +1,6 @@
 const employees = []; // Array to store employee objects
 
+
 // ...
 const resetButton = document.getElementById("add1");
 resetButton.addEventListener("click", function(event) {
@@ -7,12 +8,11 @@ resetButton.addEventListener("click", function(event) {
   resetForm();
 });
 
-const editButton = document.getElementById("edit");
-editButton.addEventListener("click", function(event) {
-  event.preventDefault();
-  editClicked();
-});
-
+// const editButton = document.getElementById("edit");
+// editButton.addEventListener("click", function(event) {
+//   event.preventDefault();
+//   editClicked();
+// });
 
 
 const addButton = document.getElementById("add");
@@ -25,6 +25,8 @@ addButton.addEventListener("click", (e) => {
   var employeeGender = document.getElementById("employeeGender").value;
   var errorMessage = document.getElementsByClassName("errorMessage");
 
+  // console.log(errorMessage,errorMessage[0],errorMessage[0].innerHTML);
+
   // for (var i = 0; i < errorMessage.length; i++) {
   //   errorMessage[i].innerHTML = "";
   // }
@@ -34,6 +36,7 @@ addButton.addEventListener("click", (e) => {
     errorMessage[0].innerHTML = "Employee ID is required";
     return false;
   }
+  console.log(errorMessage,errorMessage[0],errorMessage[0].innerHTML);
 
   if(!regex.test(employeeID)){
     errorMessage[0].innerHTML = "Employee ID must be a number ";
@@ -73,12 +76,13 @@ addButton.addEventListener("click", (e) => {
 
   var formData = readFormData();
   insertNewRecord(formData, errorMessage);
-  resetForm();
+  // resetForm();
 });
 
 
+
 //<-------------------------------------------------RESET THE FORM ------------------------------------------------------------------------->
-function resetForm(formData) {
+function resetForm() {
   document.getElementById("employeeID").value = "";
   document.getElementById("employeeName").value = "";
   document.getElementById("employeeAge").value = "";
@@ -92,7 +96,7 @@ function resetForm(formData) {
 
 
 // <--------------------------------------------------Insert the data----------------------------------------------------------------------->
-function insertNewRecord(data) {
+function insertNewRecord(data,errorMessage) {
 
   var employee = {
     employeeID: data.employeeID,
@@ -106,12 +110,20 @@ function insertNewRecord(data) {
     return employee.employeeID === data.employeeID;
   });
 
+  // var existingEmployee1 = employees.some(function(employee) {
+  //   return employee.employeeName === data.employeeName;
+  // });
+
 
   if (existingEmployee) {
+    document.getElementById("complex").innerHTML="ID is already in use";
+  
+    console.log("Done")
+    return false;
     // existingEmployee.employeeName = data.employeeName;
     // existingEmployee.employeeAge = data.employeeAge;
     // existingEmployee.employeeGender = data.employeeGender;
-    return false;
+    // return false;
 
   } else {
     // var employee = {
@@ -127,30 +139,11 @@ function insertNewRecord(data) {
     return a.employeeID - b.employeeID;
   });
 
-  console.log(employees);
+  // console.log(employees);
 
   updateTable();
 
-
-  
-    
-  // var table = document.getElementById("employeeTable");
-  // var tbody = table.getElementsByTagName("tbody")[0];
-  // var newRow = tbody.insertRow(tbody.length);
-  // var cell1 = newRow.insertCell(0);
-  // cell1.innerHTML = data.employeeID;
-  // var cell2 = newRow.insertCell(1);
-  // cell2.innerHTML = data.employeeName;
-  // var cell3 = newRow.insertCell(2);
-  // cell3.innerHTML = data.employeeAge;
-  // var cell4 = newRow.insertCell(3);
-  // cell4.innerHTML = data.employeeGender;
-  // var cell5 = newRow.insertCell(4);
-  // cell5.innerHTML = `<button class="edit" onclick="onEdit(this)">Edit</button> <button class="delete" onclick="onDelete(this)">Delete</button>`;
-
-  
 }
-
 //<---------------------------------------------------Update the table---------------------------------------------------------------------->
 function updateTable() {
   var table = document.getElementById("employeeTable");
@@ -158,7 +151,12 @@ function updateTable() {
 
   tbody.innerHTML = "";
 
-  employees.forEach(function(emp) {
+  employees.sort(function (a, b) {
+    return a.employeeID - b.employeeID;
+  });
+
+
+  employees.forEach( (emp , index ) => {
 
     var newRow = tbody.insertRow(-1); // Insert new row after table headers
 
@@ -171,19 +169,14 @@ function updateTable() {
     var cell4 = newRow.insertCell(3);
     cell4.innerHTML = emp.employeeGender;
     var cell5 = newRow.insertCell(4);
-    cell5.innerHTML = `<button class="edit" onclick="onEdit(this) ">Edit</button> <button class="delete" onclick="onDelete(this)">Delete</button>`;
-
-    
-  employees.sort(function (a, b) {
-    return a.employeeID - b.employeeID;
-  });
+    cell5.innerHTML = `<button class="edit" onclick="onEdit(this , ${index})">Edit</button> <button class="delete" onclick="onDelete(this)">Delete</button>`;
 
   });
 }
 
 
 // Update the data
-function onEdit(button) {
+function onEdit(button, index) {
   // Hide the "ADD" button
   document.getElementById("add").style.display = "none";
 
@@ -192,43 +185,37 @@ function onEdit(button) {
 
   var row = button.closest("tr");
   var cells = row.cells;
-  var employeeID = cells[0].innerHTML;
-  var employeeName = cells[1].innerHTML;
-  var employeeAge = cells[2].innerHTML;
-  var employeeGender = cells[3].innerHTML;
+  var employeeID1 = cells[0].innerHTML;
+  var employeeName1 = cells[1].innerHTML;
+  var employeeAge1 = cells[2].innerHTML;
+  var employeeGender1 = cells[3].innerHTML;
 
   // Set the values in the form for editing
-  document.getElementById("employeeID").value = employeeID;
-  document.getElementById("employeeName").value = employeeName;
-  document.getElementById("employeeAge").value = employeeAge;
-  document.getElementById("employeeGender").value = employeeGender;
+  document.getElementById("employeeID").value = employeeID1;
+  document.getElementById("employeeName").value = employeeName1;
+  document.getElementById("employeeAge").value = employeeAge1;
+  document.getElementById("employeeGender").value = employeeGender1;
 
+  document.getElementById("edit").onclick=(e)=>{
+    e.preventDefault();
+    employees[index].employeeID =document.getElementById("employeeID").value;
+    employees[index].employeeName =document.getElementById("employeeName").value;
+    employees[index].employeeAge =document.getElementById("employeeAge").value;
+    employees[index].employeeGender =document.getElementById("employeeGender").value;
 
-}
-function editClicked() {
-  console.log("Edit ke Andar");
-  var employeeID = document.getElementById("employeeID").value;
-  var employeeName = document.getElementById("employeeName").value;
-  var employeeAge = document.getElementById("employeeAge").value;
-  var employeeGender = document.getElementById("employeeGender").value;
+    // console.log(employees);
 
-  // Update the table cell values for the corresponding row
-  var table = document.getElementById("employeeTable");
-  var tbody = table.getElementsByTagName("tbody")[0];
-  var rowIndex = Array.from(tbody.rows).findIndex(function(row) {
-    return row.cells[0].innerHTML === employeeID;
-  });
-  var row = tbody.rows[rowIndex];
-  var cells = row.cells;
+    updateTable();
+    resetForm();
+    document.getElementById("add").style.display = "block";
 
-  // Update the cell values with the edited data
-  cells[1].innerHTML = employeeName;
-  cells[2].innerHTML = employeeAge;
-  cells[3].innerHTML = employeeGender;
+  // Display the "Edit" button
+    document.getElementById("edit").style.display = "none";
+    
 
-  employees.sort(function (a, b) {
-    return a.employeeID - b.employeeID;
-  });
+  }
+
+  
 }
 
 
@@ -236,7 +223,7 @@ function editClicked() {
 function onDelete(td) {
     row = td.parentElement.parentElement;
     var index = row.rowIndex - 1;
-    employees.splice(index, 1);
+    // employees.splice(index, 1);
 
     document.getElementById("employeeTable").deleteRow(row.rowIndex);
   }
