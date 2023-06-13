@@ -222,7 +222,6 @@ function editClicked() {
   var cells = row.cells;
 
   // Update the cell values with the edited data
-  cells[0].innerHTML = employeeID;
   cells[1].innerHTML = employeeName;
   cells[2].innerHTML = employeeAge;
   cells[3].innerHTML = employeeGender;
